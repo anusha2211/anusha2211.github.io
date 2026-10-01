@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anusha Agrawal · Software & AI Engineer</title>
+<meta name="description" content="Anusha Agrawal is a software and AI engineer building production backends, LLM applications, and the infrastructure that makes models fast and reliable.">
+<meta property="og:title" content="Anusha Agrawal · ML Systems & Infrastructure">
+<meta property="og:description" content="Adaptive LLM inference, distributed training, evaluation infrastructure, and low-latency systems.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F5F8; --panel:#FFFFFF; --ink:#172033; --muted:#566178; --rule:#D6DCE5;
+  --low:#6CCDB9; --high:#5B3FD1; --link:#4B33B8;
+  --c1:#5B3FD1; --c2:#2F6FD6; --c3:#0F9A8C; --c4:#D9822B;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1320; --panel:#151C2E; --ink:#E8ECF3; --muted:#9AA4B8; --rule:#283149;
+    --low:#4FB7A3; --high:#8B74FF; --link:#A897FF;
+    --c1:#8B74FF; --c2:#5B9BFF; --c3:#2FC0B0; --c4:#F0A050;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1320; --panel:#151C2E; --ink:#E8ECF3; --muted:#9AA4B8; --rule:#283149;
+  --low:#4FB7A3; --high:#8B74FF; --link:#A897FF;
+    --c1:#8B74FF; --c2:#5B9BFF; --c3:#2FC0B0; --c4:#F0A050;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth; scroll-padding-top:calc(env(safe-area-inset-top,0px) + 72px)}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); font-size:1.0625rem; line-height:1.6; -webkit-font-smoothing:antialiased}
+a{color:var(--link); text-underline-offset:3px; text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--high); outline-offset:3px; border-radius:4px}
+img{max-width:100%}
+.wrap{max-width:1120px; margin:0 auto; padding:0 clamp(20px,4vw,40px)}
+
+/* nav */
+.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:10; background:color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid transparent; transition:border-color .2s}
+.nav.scrolled{border-bottom-color:var(--rule)}
+.nav .wrap{display:flex; align-items:center; justify-content:space-between; height:64px; gap:16px}
+.brand{font-family:var(--display); font-weight:800; font-size:1.15rem; color:var(--ink); text-decoration:none; letter-spacing:-.01em}
+.nav ul{list-style:none; display:flex; gap:clamp(12px,2.5vw,28px); margin:0; padding:0; align-items:center}
+.nav ul a{color:var(--muted); text-decoration:none; font-size:.95rem}
+.nav ul a:hover{color:var(--ink)}
+.theme-btn{background:none; border:1px solid var(--rule); color:var(--ink); border-radius:999px; width:34px; height:34px; cursor:pointer; font-size:1rem; line-height:1}
+@media (max-width:620px){ .nav ul li.hide-sm{display:none} }
+
+/* hero */
+.hero{padding:clamp(40px,6vw,72px) 0 56px}
+.hero-top{display:grid; grid-template-columns:1fr; gap:0 56px; align-items:end; margin-bottom:44px}
+@media (min-width:900px){ .hero-top{grid-template-columns:1.1fr 1fr} .hero-top h1{margin:0} }
+.hero h1{font-family:var(--display); font-weight:800; font-size:clamp(3rem,9vw,6.4rem); line-height:.95; letter-spacing:-.035em; margin:0 0 22px}
+.hero .lede{font-size:clamp(1.15rem,2.2vw,1.4rem); line-height:1.5; max-width:40ch; color:var(--ink); margin:0 0 10px}
+.hero .sub{color:var(--muted); max-width:62ch; margin:0 0 28px}
+.cta-row{display:flex; flex-wrap:wrap; gap:12px}
+.btn{display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:999px; font-weight:500; text-decoration:none; font-size:.98rem; border:1px solid var(--ink)}
+.btn.solid{background:var(--ink); color:var(--paper)}
+.btn.ghost{color:var(--ink)}
+.btn:hover{text-decoration:none; transform:translateY(-1px)}
+
+/* decoding demo */
+.demo{background:var(--panel); border:1px solid var(--rule); border-radius:22px; padding:clamp(18px,3vw,32px)}
+.demo-head{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:12px 24px; margin-bottom:22px}
+.demo-head h2{font-family:var(--display); font-weight:600; font-size:1.3rem; margin:0; letter-spacing:-.01em}
+.demo-head p{margin:4px 0 0; color:var(--muted); font-size:.95rem; max-width:60ch}
+.legend{display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px; font-size:.85rem; color:var(--muted)}
+.lg{display:inline-flex; align-items:center; gap:6px}
+.sw{display:inline-block; width:14px; height:14px; border-radius:4px; border:2px solid var(--gc); background:var(--gb)}
+.g1{--gc:var(--c1); --gb:color-mix(in srgb,var(--c1) 16%,transparent)}
+.g2{--gc:var(--c2); --gb:color-mix(in srgb,var(--c2) 18%,transparent)}
+.g3{--gc:var(--c3); --gb:color-mix(in srgb,var(--c3) 20%,transparent)}
+.g4{--gc:var(--c4); --gb:color-mix(in srgb,var(--c4) 24%,transparent)}
+.lane-label .unit{font-size:.8rem}
+.lane{display:grid; grid-template-columns:minmax(150px,200px) 1fr; gap:10px 22px; align-items:start; padding:16px 0; border-top:1px solid var(--rule)}
+.lane-label strong{display:block; font-weight:600; font-size:.98rem}
+.lane-label span{color:var(--muted); font-size:.88rem}
+.lane-label .steps{color:var(--ink); margin-bottom:-2px; font-family:var(--mono); font-size:1.6rem; font-weight:500; display:block; margin-top:4px; font-variant-numeric:tabular-nums}
+.stream{display:flex; flex-wrap:wrap; gap:6px 4px; min-height:2.4em; align-content:flex-start}
+.step{position:relative; display:inline-flex; gap:3px; padding:4px; border-radius:10px; border:2px solid var(--gc); background:var(--gb); animation:pop .28s ease-out both}
+.step .n{position:absolute; top:-9px; right:-7px; min-width:18px; height:18px; padding:0 4px; border-radius:99px; background:var(--gc); color:#fff; font-family:var(--mono); font-size:.7rem; font-weight:500; display:grid; place-items:center; line-height:1}
+.tok{font-family:var(--mono); font-size:.95rem; padding:2px 6px; border-radius:6px; background:var(--panel); color:var(--ink); white-space:pre}
+@keyframes pop{from{opacity:0; transform:translateY(4px) scale(.96)}to{opacity:1; transform:none}}
+.demo-foot{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; border-top:1px solid var(--rule); padding-top:16px}
+.verdict{font-size:1rem; min-height:1.6em}
+.verdict b{font-family:var(--display); font-size:1.2rem}
+.replay{background:none; border:1px solid var(--rule); color:var(--ink); padding:8px 16px; border-radius:999px; cursor:pointer; font:inherit; font-size:.92rem}
+.replay:hover{border-color:var(--ink)}
+@media (max-width:640px){ .lane{grid-template-columns:1fr} }
+
+/* sections */
+section.block{padding:clamp(64px,9vw,112px) 0 0}
+.sec-head{display:grid; grid-template-columns:minmax(0,1fr); margin-bottom:36px}
+.sec-head h2{font-family:var(--display); font-weight:800; font-size:clamp(2rem,5vw,3.2rem); letter-spacing:-.03em; line-height:1; margin:0 0 12px}
+.sec-head p{color:var(--muted); margin:0; max-width:60ch}
+
+/* focus areas */
+.focus{display:grid; grid-template-columns:repeat(2,1fr); gap:0 48px; border-top:2px solid var(--ink)}
+.focus div{padding:24px 0}
+.focus div:nth-child(n+3){border-top:1px solid var(--rule)}
+.focus h3{font-family:var(--display); font-weight:600; font-size:1.25rem; margin:0 0 8px}
+.focus p{margin:0; color:var(--muted); font-size:.98rem}
+@media (max-width:820px){ .focus{grid-template-columns:1fr} .focus div + div{border-top:1px solid var(--rule)} }
+
+/* timeline */
+.role{display:grid; grid-template-columns:200px 1fr; gap:24px; padding:32px 0; border-top:1px solid var(--rule)}
+.role:first-of-type{border-top:2px solid var(--ink)}
+.when{color:var(--muted); font-size:.92rem; font-variant-numeric:tabular-nums}
+.when .org{display:block; font-family:var(--display); font-weight:800; font-size:1.5rem; color:var(--ink); letter-spacing:-.02em; line-height:1.1; margin-bottom:6px}
+.role h3{font-family:var(--display); font-weight:600; font-size:1.35rem; margin:0 0 4px; letter-spacing:-.01em}
+.role .meta{color:var(--muted); font-size:.95rem; margin:0 0 14px}
+.role .summary{margin:0 0 18px; max-width:68ch}
+.figs{display:flex; flex-wrap:wrap; gap:10px 28px; margin:0 0 18px; padding:0; list-style:none}
+.figs li{display:flex; flex-direction:column; min-width:110px}
+.figs b{font-family:var(--display); font-weight:800; font-size:1.8rem; line-height:1.1; letter-spacing:-.02em}
+.figs span{font-size:.85rem; color:var(--muted); max-width:22ch; line-height:1.35}
+.tag{display:inline-block; font-size:.82rem; padding:3px 10px; border-radius:999px; background:color-mix(in srgb, var(--high) 14%, transparent); color:var(--link); font-weight:500; margin-bottom:12px}
+details{border-top:1px dashed var(--rule)}
+summary{cursor:pointer; list-style:none; padding:12px 0; color:var(--link); font-weight:500; font-size:.95rem; display:flex; align-items:center; gap:8px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+"; display:inline-grid; place-items:center; width:20px; height:20px; border:1px solid currentColor; border-radius:50%; font-size:.85rem; transition:transform .2s}
+details[open] summary::before{content:"–"}
+details ul{margin:0 0 8px; padding-left:20px; max-width:72ch}
+details li{margin-bottom:8px}
+details li::marker{color:var(--muted)}
+@media (max-width:760px){ .role{grid-template-columns:1fr; gap:6px} }
+
+/* projects */
+.proj{display:grid; grid-template-columns:1fr 1.5fr; gap:12px 40px; padding:26px 0; border-top:1px solid var(--rule)}
+.proj:first-of-type{border-top:2px solid var(--ink)}
+.proj h3{font-family:var(--display); font-weight:600; font-size:1.3rem; letter-spacing:-.01em; margin:0 0 6px; line-height:1.2}
+.proj .stack{font-size:.88rem; color:var(--muted); margin:0}
+.proj .date{font-size:.85rem; color:var(--muted); font-variant-numeric:tabular-nums}
+.proj p.what{margin:0 0 10px}
+.proj .result{margin:0; font-size:.97rem; color:var(--muted)}
+.proj .result b{color:var(--ink)}
+@media (max-width:760px){ .proj{grid-template-columns:1fr} }
+
+/* toolbox */
+.tools{display:grid; grid-template-columns:repeat(2,1fr); gap:28px 48px; border-top:2px solid var(--ink); padding-top:28px}
+.tools h3{font-family:var(--display); font-weight:600; font-size:1.1rem; margin:0 0 10px}
+.chips{display:flex; flex-wrap:wrap; gap:6px; margin:0; padding:0; list-style:none}
+.chips li{font-size:.88rem; padding:4px 11px; border:1px solid var(--rule); border-radius:999px; background:var(--panel)}
+@media (max-width:760px){ .tools{grid-template-columns:1fr} }
+
+/* education */
+.edu{display:grid; grid-template-columns:repeat(2,1fr); gap:0 48px; border-top:2px solid var(--ink)}
+.edu > div{padding:24px 0}
+.edu h3{font-family:var(--display); font-weight:600; font-size:1.2rem; margin:0 0 4px}
+.edu p{margin:0; color:var(--muted)}
+.edu .rec{grid-column:1 / -1; border-top:1px solid var(--rule)}
+.edu .rec ul{margin:8px 0 0; padding-left:20px; color:var(--ink)}
+.edu .rec li{margin-bottom:6px}
+@media (max-width:760px){ .edu{grid-template-columns:1fr} .edu > div + div{border-top:1px solid var(--rule)} }
+
+/* contact */
+.contact{padding:clamp(80px,12vw,140px) 0 64px}
+.contact h2{font-family:var(--display); font-weight:800; font-size:clamp(2.2rem,6.5vw,4.6rem); letter-spacing:-.035em; line-height:1; margin:0 0 20px; max-width:16ch}
+.contact p{color:var(--muted); max-width:56ch; margin:0 0 28px}
+.mail{font-family:var(--display); font-weight:600; font-size:clamp(1.2rem,3.4vw,2rem); color:var(--ink); word-break:break-word}
+.links{display:flex; flex-wrap:wrap; gap:12px 28px; margin-top:28px}
+footer{border-top:1px solid var(--rule); padding:22px 0 40px; color:var(--muted); font-size:.88rem}
+footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .step{animation:none}
+  .btn:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">Anusha Agrawal</a>
+    <ul>
+      <li class="hide-sm"><a href="#experience">Experience</a></li>
+      <li class="hide-sm"><a href="#projects">Projects</a></li>
+      <li class="hide-sm"><a href="#toolbox">Toolbox</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><button class="theme-btn" id="themeBtn" aria-label="Switch light or dark theme">◐</button></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-top">
+      <h1>Anusha<br>Agrawal</h1>
+      <div>
+      <p class="lede">I build software that makes AI work in production: fast inference, reliable backends, and LLM applications you can trust.</p>
+      <p class="sub">Software engineer across backend, ML infrastructure, and AI engineering. At Microsoft I built adaptive LLM inference (under review at ICLR 2026) and distributed training infrastructure. At Oracle I shipped and debugged production Java services handling 10M+ records a day. At UMass I built clinical LLM pipelines with tool use, RAG, and evaluation. M.S. CS, UMass Amherst. Based in Champaign, IL.</p>
+      <div class="cta-row">
+        <a class="btn solid" href="mailto:anushaagrawal67@gmail.com">Email me</a>
+        <a class="btn ghost" href="resume.html">View résumé</a>
+        <a class="btn ghost" href="https://github.com/anusha2211" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      </div>
+      </div>
+
+      <div class="demo" aria-labelledby="demoTitle">
+        <div class="demo-head">
+          <div>
+            <h2 id="demoTitle">Same sentence, 2.3× fewer forward passes</h2>
+            <p>Every LLM pays a full forward pass for every token, even the obvious ones. My entropy-adaptive decoding reads the model's own uncertainty and, when it's confident, commits up to four tokens in a single pass. Fewer passes means less GPU compute per response, 2.1× faster generation, and cheaper serving at scale. Below is a simplified illustration.</p>
+          </div>
+          <div class="legend" aria-label="Tokens per forward pass">
+            <span class="lg"><i class="sw g1"></i>1 token</span>
+            <span class="lg"><i class="sw g2"></i>2</span>
+            <span class="lg"><i class="sw g3"></i>3</span>
+            <span class="lg"><i class="sw g4"></i>4 per pass</span>
+          </div>
+        </div>
+
+        <div class="lane" id="laneStd">
+          <div class="lane-label"><strong>Standard decoding</strong><span>1 token per forward pass</span><span class="steps" id="stdSteps">0</span><span class="unit">forward passes</span></div>
+          <div class="stream" id="stdStream" aria-live="off"></div>
+        </div>
+        <div class="lane adaptive" id="laneAd">
+          <div class="lane-label"><strong>Entropy-adaptive</strong><span>1–4 tokens per forward pass</span><span class="steps" id="adSteps">0</span><span class="unit">forward passes</span></div>
+          <div class="stream" id="adStream" aria-live="off"></div>
+        </div>
+
+        <div class="demo-foot">
+          <div class="verdict" id="verdict" aria-live="polite">&nbsp;</div>
+          <button class="replay" id="replay">Replay</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="wrap">
+    <section class="block" aria-labelledby="whatTitle">
+      <div class="sec-head">
+        <h2 id="whatTitle">Where I'm useful</h2>
+        <p>I work end to end: from the API a product calls, to the LLM pipeline behind it, to the GPUs it runs on. I care most about the unglamorous parts that decide whether things work in production, like a missing index, a CPU-bound data loader, or an eval metric that looks better than reality.</p>
+      </div>
+      <div class="focus">
+        <div>
+          <h3>Backend & full-stack engineering</h3>
+          <p>Production Java/Spring Boot services and REST APIs, Go and Node backends, React/TypeScript frontends, and real-time systems over WebSockets. Comfortable owning a feature from client requirements to deploy.</p>
+        </div>
+        <div>
+          <h3>AI engineering</h3>
+          <p>LLM applications that hold up outside a demo: RAG, structured tool use, schema-validated outputs with fallbacks, and LLM-as-judge evaluation validated against human experts.</p>
+        </div>
+        <div>
+          <h3>ML infrastructure & inference</h3>
+          <p>Adaptive decoding, 12-GPU training on SLURM with torchrun and FSDP, SFT and DPO post-training, and eval harnesses that catch regressions early.</p>
+        </div>
+        <div>
+          <h3>Reliability & distributed systems</h3>
+          <p>Profiling and fixing latency regressions, debugging Kubernetes/Istio failures with metrics and traces, and building storage and streaming systems that survive failures.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="experience" aria-labelledby="expTitle">
+      <div class="sec-head">
+        <h2 id="expTitle">Experience</h2>
+        <p>Most recent first. Open any role for the full detail.</p>
+      </div>
+
+      <article class="role">
+        <div class="when"><span class="org">Microsoft</span>Feb 2026 – Aug 2026<br>Remote</div>
+        <div>
+          <span class="tag">Under review at ICLR 2026</span>
+          <h3>AI Research Extern</h3>
+          <p class="summary">Owned development of an entropy-based adaptive inference pipeline for LLaMA-3.1-8B in a shared research and engineering codebase, then fine-tuned and aligned a continuous-vector language model on a 12-GPU cluster I set up.</p>
+          <ul class="figs">
+            <li><b>2.3×</b><span>fewer autoregressive decoding steps</span></li>
+            <li><b>2.1×</b><span>wall-clock speedup</span></li>
+            <li><b>34%</b><span>less sycophantic agreement after DPO</span></li>
+            <li><b>27×</b><span>faster evaluation, 90s to 3.3s per sample</span></li>
+          </ul>
+          <details>
+            <summary>Full detail</summary>
+            <ul>
+              <li>Developed entropy-based adaptive LLM inference for LLaMA-3.1-8B trained on ~1B Pile tokens, cutting autoregressive decoding steps by 2.3×, with a 2.1× wall-clock speedup and 28% lower latency on long-form generation.</li>
+              <li>Performed supervised fine-tuning of CALM-XL (1.82B params) on 493K multi-turn conversations, building a custom pipeline that adapts standard SFT data to a 4-token continuous-vector generation architecture.</li>
+              <li>Improved multi-turn behavior with DPO on 3,200 preference pairs, reducing sycophantic agreement with false user claims by 34% while keeping accuracy within 1.2% of baseline.</li>
+              <li>Built 12-GPU distributed training infrastructure with PyTorch, torchrun, and SLURM, debugging CUDA, FlashAttention, and bf16 runtime failures while scaling from single-GPU validation to distributed runs.</li>
+              <li>Built a PyTorch evaluation harness running latency, throughput, and perplexity checks per checkpoint, and used it to isolate a decode-side autoencoder defect, bounding its effect to under 0.5% of the training signal.</li>
+              <li>Replaced sequential prefix scoring with GPU-batched full-sequence inference for token-level entropy analysis, cutting evaluation runtime from 90s to 3.3s per sample.</li>
+              <li>Instrumented distributed runs with Weights &amp; Biases to track throughput, evaluation latency, convergence, and GPU-scaling behavior across configurations.</li>
+            </ul>
+          </details>
+        </div>
+      </article>
+
+      <article class="role">
+        <div class="when"><span class="org">UMass BioNLP Lab</span>Jul 2025 – May 2026<br>Amherst, MA</div>
+        <div>
+          <h3>Graduate AI Researcher</h3>
+          <p class="summary">Asked whether clinical LLMs that get the right answer are actually reasoning correctly. Step-wise evaluation showed they often aren't, so I built pipelines that check their work and refuse to guess when evidence is missing.</p>
+          <ul class="figs">
+            <li><b>~20 pts</b><span>of inflated final-answer accuracy exposed</span></li>
+            <li><b>45→65%</b><span>accuracy recovered with RAG</span></li>
+            <li><b>95%+</b><span>LLM-as-judge agreement with clinicians</span></li>
+            <li><b>1.6×</b><span>FSDP throughput from prefetching</span></li>
+          </ul>
+          <details>
+            <summary>Full detail</summary>
+            <ul>
+              <li>Designed step-wise evaluation across evidence extraction, formula selection, arithmetic, and readiness, revealing final-answer accuracy was inflated by about 20 points; added RAG-based formula selection to lift accuracy from 45% to 65%.</li>
+              <li>Engineered a compute-readiness pipeline that extracts calculator inputs from unstructured patient notes (regex plus LLM, tracked by method), flags missing evidence instead of guessing, and routes complete cases to deterministic Python tools for the arithmetic.</li>
+              <li>Validated an LLM-as-judge evaluator against clinician annotations at 95%+ agreement before scaling automated evaluation with human verification.</li>
+              <li>Built 84 multi-step clinical reasoning tasks spanning chained medical calculators, normalizing shared patient parameters into a canonical schema for retrieval and structured tool use.</li>
+              <li>Rebuilt the evaluation setup into a YAML-driven vLLM pipeline for Mixtral and Qwen, cutting debugging time by 35%.</li>
+              <li>Traced FSDP throughput bottlenecks past GPU worker scaling to CPU-bound data ingestion, and added prefetching for a 1.6× gain.</li>
+            </ul>
+          </details>
+        </div>
+      </article>
+
+      <article class="role">
+        <div class="when"><span class="org">Oracle</span>Jul 2023 – Jul 2024<br>Pune, India</div>
+        <div>
+          <span class="tag">Pat on the Back Award</span>
+          <h3>Software Engineer</h3>
+          <p class="summary">Owned end-to-end delivery of Java (Spring Boot) billing services and REST APIs handling 10M+ records a day: designing features with enterprise clients, shipping them, writing the tests, and tracking down why things got slow or flaky in production.</p>
+          <ul class="figs">
+            <li><b>300M+</b><span>monthly transactions behind my index fix</span></li>
+            <li><b>20%</b><span>lower peak-cycle latency</span></li>
+            <li><b>30%</b><span>faster client discrepancy resolution</span></li>
+            <li><b>26%</b><span>fewer release defects</span></li>
+          </ul>
+          <details>
+            <summary>Full detail</summary>
+            <ul>
+              <li>Traced a 12% P95 latency regression in Spring Boot billing services to N+1 query patterns in the REST API layer and fixed it with batched fetches.</li>
+              <li>Used SQL query plans to expose full-table scans behind month-end batch delays and indexed the reconciliation table, cutting peak-cycle latency by 20% across 300M+ monthly transactions.</li>
+              <li>Debugged recurring 502 failures in Kubernetes/Istio microservices with Prometheus/Grafana telemetry and service traces, ruling out network policy before isolating a sidecar misconfiguration and fixing readiness probes to stabilize rolling deploys.</li>
+              <li>Partnered directly with enterprise clients to turn CRM and billing workflows into technical designs and JavaScript dashboards across 5M+ monthly billing events, reducing discrepancy resolution time by 30%.</li>
+              <li>Used Copilot to draft regression tests, then caught assertions that missed real bugs and added edge cases like null and duplicate inputs, reducing release defects by 26%.</li>
+            </ul>
+          </details>
+        </div>
+      </article>
+    </section>
+
+    <section class="block" id="projects" aria-labelledby="projTitle">
+      <div class="sec-head">
+        <h2 id="projTitle">Projects</h2>
+        <p>Full-stack products, LLM applications, and systems I built to understand a problem from the inside.</p>
+      </div>
+
+      <article class="proj">
+        <div><h3>AI-assisted code collaboration platform</h3><p class="stack">Go, React, TypeScript, WebSockets, Redis, Docker, Kubernetes, AWS</p><span class="date">Jan 2025</span></div>
+        <div><p class="what">Real-time collaborative editor with CRDT-based sync over WebSockets and Redis-backed sessions, plus LLM-powered explanations and test generation validated against the shared repo. Deployed on AWS with CI/CD, health checks, and failure-aware session recovery.</p>
+        <p class="result"><b>Sub-100ms</b> sync, <b>10K+</b> simulated sessions, debugging time down <b>30%</b>.</p></div>
+      </article>
+
+      <article class="proj">
+        <div><h3>Low-latency distributed storage and metadata service</h3><p class="stack">C++, Rust, Linux, Cassandra, multithreading</p><span class="date">Dec 2025</span></div>
+        <div><p class="what">Distributed storage across 20+ simulated Linux nodes with consistent hashing, partitioned metadata, replication, and node-failure recovery. Optimized multithreaded metadata lookups and replica routing.</p>
+        <p class="result">Latency <b>185ms → 111ms</b>, throughput <b>2.4K → 4.8K ops/sec</b>, availability up <b>41%</b>.</p></div>
+      </article>
+
+      <article class="proj">
+        <div><h3>Real-time credit card fraud detection engine</h3><p class="stack">Python, PySpark, Kafka, SQL, Docker</p><span class="date">Dec 2024</span></div>
+        <div><p class="what">Streaming pipeline computing fraud-risk features, with validation and observability for duplicate, delayed, and malformed events, plus dropped-message tracing.</p>
+        <p class="result"><b>10K+</b> transactions/sec, <b>under 1s</b> per micro-batch, <b>99%</b> uptime under sustained load.</p></div>
+      </article>
+
+      <article class="proj">
+        <div><h3>Transcript Q&amp;A and semantic search</h3><p class="stack">Python, SBERT, FAISS, RAG, LLM evaluation</p><span class="date">May 2025</span></div>
+        <div><p class="what">RAG pipeline that grounds LLM answers and summaries in retrieved transcript evidence, evaluated with retrieval checks, ROUGE, regression tests, and an LLM judge scored over 1,000+ pairs and checked against human ratings.</p>
+        <p class="result">End-to-end quality up <b>26%</b>, judge score <b>4.2/5</b>.</p></div>
+      </article>
+
+      <article class="proj">
+        <div><h3>LLM itinerary planner</h3><p class="stack">Java, Spring Boot, Flask, Llama 3.2-3B</p></div>
+        <div><p class="what">Spring Boot backend calling a Flask service running Llama 3.2-3B, with JSON schema validation and a three-layer fallback so malformed model output never reaches the user.</p></div>
+      </article>
+
+      <article class="proj">
+        <div><h3>Full-stack workflow monitoring platform</h3><p class="stack">React, TypeScript, Redux, Node.js, Express, MongoDB</p><span class="date">Jul 2025</span></div>
+        <div><p class="what">Workflow monitoring app with REST APIs, role-based access, delay detection, and reusable frontend components and data models for boards, tasks, and workflow state.</p>
+        <p class="result">Bottlenecks down <b>35%</b>, sprint predictability up <b>20%</b>, feature integration time down <b>28%</b>.</p></div>
+      </article>
+    </section>
+
+    <section class="block" id="toolbox" aria-labelledby="toolTitle">
+      <div class="sec-head">
+        <h2 id="toolTitle">Toolbox</h2>
+        <p>What I reach for, grouped by the kind of problem.</p>
+      </div>
+      <div class="tools">
+        <div><h3>Languages</h3><ul class="chips"><li>Python</li><li>C++</li><li>Java</li><li>Go</li><li>Rust</li><li>TypeScript</li><li>JavaScript</li><li>SQL</li><li>Bash</li></ul></div>
+        <div><h3>GPU &amp; ML systems</h3><ul class="chips"><li>PyTorch</li><li>CUDA</li><li>FlashAttention</li><li>torchrun</li><li>FSDP</li><li>bf16</li><li>vLLM</li><li>SLURM</li><li>Weights &amp; Biases</li><li>MLflow</li></ul></div>
+        <div><h3>AI engineering &amp; evaluation</h3><ul class="chips"><li>LLM APIs</li><li>Tool use</li><li>Structured outputs</li><li>Prompt engineering</li><li>Transformers</li><li>Hugging Face</li><li>SFT</li><li>DPO / RLHF</li><li>LoRA / PEFT</li><li>RAG</li><li>FAISS</li><li>SBERT</li><li>LLM-as-judge</li><li>Benchmarking</li></ul></div>
+        <div><h3>Distributed &amp; data</h3><ul class="chips"><li>Distributed systems</li><li>Concurrency</li><li>Replication</li><li>Kafka</li><li>PySpark</li><li>Cassandra</li><li>Redis</li><li>PostgreSQL</li><li>MongoDB</li><li>DynamoDB</li></ul></div>
+        <div><h3>Infrastructure &amp; reliability</h3><ul class="chips"><li>Linux</li><li>Docker</li><li>Kubernetes</li><li>Istio</li><li>AWS</li><li>Azure</li><li>CI/CD</li><li>Prometheus</li><li>Grafana</li><li>Tracing</li></ul></div>
+        <div><h3>Engineering practice</h3><ul class="chips"><li>Git</li><li>Code review</li><li>Unit &amp; regression testing</li><li>Data structures &amp; algorithms</li><li>System design</li><li>Copilot, Claude, Cursor, Codex</li></ul></div>
+        <div><h3>Backend &amp; full-stack</h3><ul class="chips"><li>Spring Boot</li><li>JPA</li><li>FastAPI</li><li>REST APIs</li><li>gRPC</li><li>Microservices</li><li>WebSockets</li><li>React</li><li>Redux</li><li>Node.js</li><li>Express</li><li>API design</li></ul></div>
+      </div>
+    </section>
+
+    <section class="block" id="education" aria-labelledby="eduTitle">
+      <div class="sec-head"><h2 id="eduTitle">Education &amp; recognition</h2></div>
+      <div class="edu">
+        <div><h3>University of Massachusetts Amherst</h3><p>M.S. Computer Science, GPA 3.9/4<br>Sept 2024 – May 2026</p></div>
+        <div><h3>Savitribai Phule Pune University</h3><p>B.Tech Electronics, GPA 3.7/4<br>Sept 2019 – May 2023</p></div>
+        <div class="rec">
+          <ul>
+            <li>Best Paper Award, ICICEEE'22, for work on emotion recognition</li>
+            <li>Pat on the Back Award, Oracle, recognized by org leadership</li>
+            <li>Oracle certifications: WebLogic Server, OCI, Java SE Programming, Linux/Unix, Containerization &amp; Orchestration</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact" aria-labelledby="contactTitle">
+      <h2 id="contactTitle">Let's make something run faster.</h2>
+      <p>I'm looking for full-time roles in ML infrastructure, inference, and systems engineering, especially where software engineering and AI meet. The quickest way to reach me is email.</p>
+      <a class="mail" href="mailto:anushaagrawal67@gmail.com">anushaagrawal67@gmail.com</a>
+      <div class="links">
+        <a href="https://www.linkedin.com/in/anusha--agrawal/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/anusha2211" target="_blank" rel="noopener">GitHub</a>
+        <a href="resume.html">Résumé</a>
+        <a href="resume.pdf" target="_blank" rel="noopener">Résumé (PDF)</a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Anusha Agrawal</span><span>Champaign, IL</span></div></footer>
+
+<script>
+(function(){
+  // theme toggle
+  const root=document.documentElement, btn=document.getElementById('themeBtn');
+  try{ const s=localStorage.getItem('theme'); if(s) root.setAttribute('data-theme',s); }catch(e){}
+  btn.addEventListener('click',()=>{
+    const cur=root.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    const next=cur==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{ localStorage.setItem('theme',next); }catch(e){}
+  });
+
+  // nav border on scroll
+  const nav=document.getElementById('nav');
+  addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>8),{passive:true});
+
+  // decoding demo: each inner array is one adaptive forward pass (1–4 tokens). Illustrative only.
+  const groups=[
+    ["I"],
+    [" build"," the"],
+    [" systems"," that"," make"],
+    [" large"," language"," models"," faster"],
+    [","," measurable"],
+    [","," and"," correct"],
+    [" —"],
+    [" from"],
+    [" GPU"," clusters"],
+    [" to"," clinical"," pipelines","."]
+  ];
+  const flat=groups.flat();
+  const std=document.getElementById('stdStream'), ad=document.getElementById('adStream');
+  const stdN=document.getElementById('stdSteps'), adN=document.getElementById('adSteps');
+  const verdict=document.getElementById('verdict');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let timer=null;
+
+  function pass(tokens){
+    const w=document.createElement('span'); w.className='step g'+tokens.length;
+    w.setAttribute('aria-label',tokens.length+' token'+(tokens.length>1?'s':'')+' in one forward pass');
+    tokens.forEach(t=>{ const s=document.createElement('span'); s.className='tok'; s.textContent=t.trim()||t; w.appendChild(s); });
+    if(tokens.length>1){ const n=document.createElement('span'); n.className='n'; n.textContent='×'+tokens.length; w.appendChild(n); }
+    return w;
+  }
+  function done(){ verdict.innerHTML='<b>23 forward passes vs 10.</b> Same 23 tokens, 2.3× less decoding work.'; }
+
+  function run(){
+    clearInterval(timer); std.innerHTML=''; ad.innerHTML=''; stdN.textContent='0'; adN.textContent='0'; verdict.innerHTML='&nbsp;';
+    if(reduce){
+      flat.forEach(t=>std.appendChild(pass([t]))); groups.forEach(g=>ad.appendChild(pass(g)));
+      stdN.textContent=flat.length; adN.textContent=groups.length; done(); return;
+    }
+    let i=0;
+    timer=setInterval(()=>{
+      if(i<flat.length){ std.appendChild(pass([flat[i]])); stdN.textContent=i+1; }
+      if(i<groups.length){ ad.appendChild(pass(groups[i])); adN.textContent=i+1; }
+      i++;
+      if(i>=flat.length){ clearInterval(timer); done(); }
+    },300);
+  }
+  document.getElementById('replay').addEventListener('click',run);
+
+  // start when the demo scrolls into view
+  const io=new IntersectionObserver(es=>{ if(es[0].isIntersecting){ run(); io.disconnect(); } },{threshold:.35});
+  io.observe(document.querySelector('.demo'));
+})();
+</script>
+</body>
+</html>
