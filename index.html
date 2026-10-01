@@ -55,10 +55,13 @@ img{max-width:100%}
 @media (max-width:620px){ .nav ul li.hide-sm{display:none} }
 
 /* hero */
-.hero{padding:clamp(40px,6vw,72px) 0 56px}
-.hero-top{display:grid; grid-template-columns:1fr; gap:0 56px; align-items:end; margin-bottom:44px}
+.hero{padding:clamp(24px,3vw,40px) 0 56px}
+.hero-top{display:grid; grid-template-columns:1fr; gap:20px 56px; align-items:start; margin-bottom:32px}
 @media (min-width:900px){ .hero-top{grid-template-columns:1.1fr 1fr} .hero-top h1{margin:0} }
 .hero h1{font-family:var(--display); font-weight:800; font-size:clamp(3rem,9vw,6.4rem); line-height:.95; letter-spacing:-.035em; margin:0 0 22px}
+.open{display:inline-flex; align-items:center; gap:10px; font-size:.95rem; color:var(--muted)}
+.open::before{content:""; width:9px; height:9px; border-radius:50%; background:var(--c3)}
+@media (min-width:900px){ .hero-top h1{margin:-.06em 0 18px} }
 .hero .lede{font-size:clamp(1.15rem,2.2vw,1.4rem); line-height:1.5; max-width:40ch; color:var(--ink); margin:0 0 10px}
 .hero .sub{color:var(--muted); max-width:62ch; margin:0 0 28px}
 .cta-row{display:flex; flex-wrap:wrap; gap:12px}
@@ -92,8 +95,11 @@ img{max-width:100%}
 .demo-foot{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; border-top:1px solid var(--rule); padding-top:16px}
 .verdict{font-size:1rem; min-height:1.6em}
 .verdict b{font-family:var(--display); font-size:1.2rem}
-.replay{background:none; border:1px solid var(--rule); color:var(--ink); padding:8px 16px; border-radius:999px; cursor:pointer; font:inherit; font-size:.92rem}
-.replay:hover{border-color:var(--ink)}
+.replay{display:inline-flex; align-items:center; gap:10px; background:var(--ink); color:var(--paper); border:0; padding:13px 28px; border-radius:999px; cursor:pointer; font:inherit; font-size:1.05rem; font-weight:600; box-shadow:0 2px 0 color-mix(in srgb,var(--ink) 35%,transparent)}
+.replay svg{width:18px; height:18px}
+.replay:hover{transform:translateY(-1px)}
+.replay.nudge{animation:ring 1.4s ease-out 1}
+@keyframes ring{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--high) 70%,transparent)}100%{box-shadow:0 0 0 16px transparent}}
 @media (max-width:640px){ .lane{grid-template-columns:1fr} }
 
 /* sections */
@@ -173,6 +179,7 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
   .step{animation:none}
+  .replay.nudge{animation:none}
   .btn:hover{transform:none}
 }
 </style>
@@ -196,10 +203,13 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
   <div class="wrap">
     <section class="hero">
       <div class="hero-top">
+      <div>
       <h1>Anusha<br>Agrawal</h1>
+      <span class="open">Open to full-time roles</span>
+      </div>
       <div>
       <p class="lede">I build software that makes AI work in production: fast inference, reliable backends, and LLM applications you can trust.</p>
-      <p class="sub">Software engineer across backend, ML infrastructure, and AI engineering. At Microsoft I built adaptive LLM inference (under review at ICLR 2026) and distributed training infrastructure. At Oracle I shipped and debugged production Java services handling 10M+ records a day. At UMass I built clinical LLM pipelines with tool use, RAG, and evaluation. M.S. CS, UMass Amherst. Based in Champaign, IL.</p>
+      <p class="sub">Software engineer across backend, ML infrastructure, and AI engineering. At Microsoft I built adaptive LLM inference (under review at ICLR 2027) and distributed training infrastructure. At Oracle I shipped and debugged production Java services handling 10M+ records a day. At UMass I built clinical LLM pipelines with tool use, RAG, and evaluation. M.S. CS, UMass Amherst. Based in Champaign, IL.</p>
       <div class="cta-row">
         <a class="btn solid" href="mailto:anushaagrawal67@gmail.com">Email me</a>
         <a class="btn ghost" href="resume.html">View résumé</a>
@@ -233,7 +243,7 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
 
         <div class="demo-foot">
           <div class="verdict" id="verdict" aria-live="polite">&nbsp;</div>
-          <button class="replay" id="replay">Replay</button>
+          <button class="replay" id="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Replay demo</button>
         </div>
       </div>
     </section>
@@ -274,7 +284,7 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
       <article class="role">
         <div class="when"><span class="org">Microsoft</span>Feb 2026 – Aug 2026<br>Remote</div>
         <div>
-          <span class="tag">Under review at ICLR 2026</span>
+          <span class="tag">Under review at ICLR 2027</span>
           <h3>AI Research Extern</h3>
           <p class="summary">Owned development of an entropy-based adaptive inference pipeline for LLaMA-3.1-8B in a shared research and engineering codebase, then fine-tuned and aligned a continuous-vector language model on a 12-GPU cluster I set up.</p>
           <ul class="figs">
@@ -424,7 +434,7 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
 
     <section class="contact" id="contact" aria-labelledby="contactTitle">
       <h2 id="contactTitle">Let's make something run faster.</h2>
-      <p>I'm looking for full-time roles in ML infrastructure, inference, and systems engineering, especially where software engineering and AI meet. The quickest way to reach me is email.</p>
+      <p>I'm looking for full-time roles in software engineering (core or AI/ML), AI engineering, and AI research systems engineering, especially where software engineering and AI meet. Email is the fastest way to reach me.</p>
       <a class="mail" href="mailto:anushaagrawal67@gmail.com">anushaagrawal67@gmail.com</a>
       <div class="links">
         <a href="https://www.linkedin.com/in/anusha--agrawal/" target="_blank" rel="noopener">LinkedIn</a>
@@ -481,7 +491,8 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
     if(tokens.length>1){ const n=document.createElement('span'); n.className='n'; n.textContent='×'+tokens.length; w.appendChild(n); }
     return w;
   }
-  function done(){ verdict.innerHTML='<b>23 forward passes vs 10.</b> Same 23 tokens, 2.3× less decoding work.'; }
+  const rb=document.getElementById('replay');
+  function done(){ verdict.innerHTML='<b>23 forward passes vs 10.</b> Same 23 tokens, 2.3× less decoding work.'; rb.classList.remove('nudge'); void rb.offsetWidth; rb.classList.add('nudge'); }
 
   function run(){
     clearInterval(timer); std.innerHTML=''; ad.innerHTML=''; stdN.textContent='0'; adN.textContent='0'; verdict.innerHTML='&nbsp;';
@@ -500,8 +511,8 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
   document.getElementById('replay').addEventListener('click',run);
 
   // start when the demo scrolls into view
-  const io=new IntersectionObserver(es=>{ if(es[0].isIntersecting){ run(); io.disconnect(); } },{threshold:.35});
-  io.observe(document.querySelector('.demo'));
+  const io=new IntersectionObserver(es=>{ if(es[0].isIntersecting){ run(); io.disconnect(); } },{threshold:.9, rootMargin:'0px 0px -3% 0px'});
+  io.observe(document.getElementById('laneAd'));
 })();
 </script>
 </body>
