@@ -222,7 +222,7 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
         <div class="demo-head">
           <div>
             <h2 id="demoTitle">Same sentence, 2.3× fewer forward passes</h2>
-            <p>Every LLM pays a full forward pass for every token, even the obvious ones. My entropy-adaptive decoding reads the model's own uncertainty and, when it's confident, commits up to four tokens in a single pass. Fewer passes means less GPU compute per response, 2.1× faster generation, and cheaper serving at scale. Below is a simplified illustration.</p>
+            <p>Every LLM pays a full forward pass for every token, even the obvious ones. My entropy-adaptive inference reads the model's own uncertainty and, when it's confident, commits up to four tokens in a single pass. Fewer passes means less GPU compute per response, 2.1× faster generation, and cheaper serving at scale. Below is a simplified illustration.</p>
           </div>
           <div class="legend" aria-label="Tokens per forward pass">
             <span class="lg"><i class="sw g1"></i>1 token</span>
@@ -232,15 +232,15 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
           </div>
         </div>
 
-        <div class="lane" id="laneStd">
-          <div class="lane-label"><strong>Standard decoding</strong><span>1 token per forward pass</span><span class="steps" id="stdSteps">0</span><span class="unit">forward passes</span></div>
-          <div class="stream" id="stdStream" aria-live="off"></div>
-        </div>
         <div class="lane adaptive" id="laneAd">
           <div class="lane-label"><strong>Entropy-adaptive</strong><span>1–4 tokens per forward pass</span><span class="steps" id="adSteps">0</span><span class="unit">forward passes</span></div>
           <div class="stream" id="adStream" aria-live="off"></div>
         </div>
 
+        <div class="lane" id="laneStd">
+          <div class="lane-label"><strong>Standard decoding</strong><span>1 token per forward pass</span><span class="steps" id="stdSteps">0</span><span class="unit">forward passes</span></div>
+          <div class="stream" id="stdStream" aria-live="off"></div>
+        </div>
         <div class="demo-foot">
           <div class="verdict" id="verdict" aria-live="polite">&nbsp;</div>
           <button class="replay" id="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Replay demo</button>
@@ -266,7 +266,7 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
         </div>
         <div>
           <h3>ML infrastructure & inference</h3>
-          <p>Adaptive decoding, 12-GPU training on SLURM with torchrun and FSDP, SFT and DPO post-training, and eval harnesses that catch regressions early.</p>
+          <p>Adaptive LLM inference, 12-GPU training on SLURM with torchrun and FSDP, SFT and DPO post-training, and eval harnesses that catch regressions early.</p>
         </div>
         <div>
           <h3>Reliability & distributed systems</h3>
@@ -434,13 +434,12 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
 
     <section class="contact" id="contact" aria-labelledby="contactTitle">
       <h2 id="contactTitle">Let's make something run faster.</h2>
-      <p>I'm looking for full-time roles in software engineering (core or AI/ML), AI engineering, and AI research systems engineering, especially where software engineering and AI meet. Email is the fastest way to reach me.</p>
+      <p>I'm looking for a full-time role where strong software engineering and AI work together: core software engineering, AI/ML engineering, or AI research systems. I like owning problems end to end, from the API to the model to the GPUs it runs on. If that sounds like your team, I'd love to hear what you're building. Email is the fastest way to reach me.</p>
       <a class="mail" href="mailto:anushaagrawal67@gmail.com">anushaagrawal67@gmail.com</a>
       <div class="links">
         <a href="https://www.linkedin.com/in/anusha--agrawal/" target="_blank" rel="noopener">LinkedIn</a>
         <a href="https://github.com/anusha2211" target="_blank" rel="noopener">GitHub</a>
         <a href="resume.html">Résumé</a>
-        <a href="resume.pdf" target="_blank" rel="noopener">Résumé (PDF)</a>
       </div>
     </section>
   </div>
@@ -492,7 +491,7 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
     return w;
   }
   const rb=document.getElementById('replay');
-  function done(){ verdict.innerHTML='<b>23 forward passes vs 10.</b> Same 23 tokens, 2.3× less decoding work.'; rb.classList.remove('nudge'); void rb.offsetWidth; rb.classList.add('nudge'); }
+  function done(){ verdict.innerHTML='<b>23 forward passes vs 10.</b> Same 23 tokens, 2.3× less inference work.'; rb.classList.remove('nudge'); void rb.offsetWidth; rb.classList.add('nudge'); }
 
   function run(){
     clearInterval(timer); std.innerHTML=''; ad.innerHTML=''; stdN.textContent='0'; adN.textContent='0'; verdict.innerHTML='&nbsp;';
@@ -512,7 +511,7 @@ footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8p
 
   // start when the demo scrolls into view
   const io=new IntersectionObserver(es=>{ if(es[0].isIntersecting){ run(); io.disconnect(); } },{threshold:.9, rootMargin:'0px 0px -3% 0px'});
-  io.observe(document.getElementById('laneAd'));
+  io.observe(document.getElementById('laneStd'));
 })();
 </script>
 </body>
